@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
+import AdminPanel from "./components/admin-panel";
 import './App.css';
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
             </form>
           </div>
         </div>
+        <AdminPanel userSettings={"xd"}/>
       </div>
     </div>
   );
