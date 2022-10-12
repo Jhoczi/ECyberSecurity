@@ -1,7 +1,7 @@
 import React from 'react';
 
 const LoginPanel:(x: any) => any = ({ userModel }) => {
-    console.log(userModel);
+
     return (
         <div className="login-container mx-5 mt-3 mb-3">
             <div className="container">
