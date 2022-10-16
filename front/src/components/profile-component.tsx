@@ -26,7 +26,7 @@ export const Profile = (props: Props) => {
             setState({...state, redirect: "/home"});
 
         setState({...state, currentUser: currentUser, userReady: true});
-    });
+    },[]);
 
     if (state.redirect) {
         return <Navigate to={state.redirect}/>
@@ -58,8 +58,7 @@ export const Profile = (props: Props) => {
                     </p>
                     <strong>Authorities:</strong>
                     <ul>
-                        {currentUser.roles &&
-                            currentUser.roles.map((role, index) => <li key={index}>{role}</li>)}
+                        <li>{currentUser.role}</li>
                     </ul>
                 </div> : null}
         </div>

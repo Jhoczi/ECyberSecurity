@@ -24,16 +24,16 @@ export const Home = (props: Props) => {
             error => {
                 setState({
                     content: (
-                        error.response &&
-                        error.response.data &&
-                        error.response.data.message
+                            error.response &&
+                            error.response.data &&
+                            error.response.data.message
                         ) ||
                         error.message ||
                         error.toString()
                 });
             }
         );
-    });
+    },[]);
 
     return (
         <div className="container">

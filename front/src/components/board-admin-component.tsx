@@ -14,26 +14,28 @@ export const BoardAdmin = (props: Props) => {
         content: ""
     });
 
-    useEffect(() => {
-        UserService.getAdminBoard().then(
-            response => {
-                setState({
-                    content: response.data
-                });
-            },
-            error => {
-                setState({
-                    content: (
-                            error.response &&
-                            error.response.data &&
-                            error.response.data.message
-                        ) ||
-                        error.message ||
-                        error.toString()
-                });
-            }
-        );
-    });
+    UserService.getAdminBoard().then(
+        response => {
+            setState({
+                content: response.data
+            });
+        },
+        error => {
+            setState({
+                content: (
+                        error.response &&
+                        error.response.data &&
+                        error.response.data.message
+                    ) ||
+                    error.message ||
+                    error.toString()
+            });
+        }
+    );
+
+    // useEffect(() => {
+    //
+    // });
 
     return (
         <div className="container">

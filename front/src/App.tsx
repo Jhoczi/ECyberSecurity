@@ -52,7 +52,7 @@ function App() {
         return () => {
             EventBus.remove("logout", logOut);
         };
-    });
+    },[]);
 
     const logOut = () => {
         AuthService.logout();
@@ -69,7 +69,7 @@ function App() {
         <div>
             <nav className="navbar navbar-expand navbar-dark bg-dark">
                 <Link to={"/"} className="navbar-brand">
-                    bezKoder
+                    ECyberSecure
                 </Link>
                 <div className="navbar-nav mr-auto">
                     <li className="nav-item">
