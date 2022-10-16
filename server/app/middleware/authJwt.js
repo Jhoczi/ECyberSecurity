@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config.js");
 const db = require("../models");
-const User = db.User;
+const User = db.users;
 
 verifyToken = (req, res, next) => {
     let token = req.headers["x-access-token"];
@@ -24,18 +24,27 @@ verifyToken = (req, res, next) => {
 
 isAdmin = (req, res, next) => {
     User.findByPk(req.userId).then(user => {
-        user.getRoles().then(roles => {
-            for (let i = 0; i < roles.length; i++) {
-                if (roles[i].name.toUpperCase() === "ADMIN") {
-                    next();
-                    return;
-                }
-            }
-            res.status(403).send({
-                message: "Require Admin Role!"
-            });
+        // veri brzydko wygląda, ale działa
+        if (user.roleId === 2)
+        {
+            next();
             return;
+        }
+        res.status(403).send({
+            message: "Require Admin Role!"
         });
+        // user.getRole().then(roles => {
+        //     for (let i = 0; i < roles.length; i++) {
+        //         if (roles[i].name.toUpperCase() === "ADMIN") {
+        //             next();
+        //             return;
+        //         }
+        //     }
+        //     res.status(403).send({
+        //         message: "Require Admin Role!"
+        //     });
+        //     return;
+        // });
     });
 };
 

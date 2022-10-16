@@ -45,7 +45,7 @@ export const Login = (props: Props) =>
         return () => {
             window.location.reload();
         }
-    });
+    }, []);
 
     const validationSchema = () => {
         return Yup.object().shape({

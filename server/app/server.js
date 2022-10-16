@@ -12,7 +12,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const db = require("./models");
+const bcrypt = require("bcryptjs");
 const Role = db.roles;
+const User = db.users;
 
 db.sequelize.sync({ force: true }).then(() => {
     console.log('Drop and Resync Db');
@@ -27,6 +29,20 @@ function initial() {
     Role.create({
         id: 2,
         name: 'admin'
+    });
+
+    // create one admin user and one normal user
+    User.create({
+        username: 'admin',
+        email: 'admin@localhost',
+        password:  bcrypt.hashSync('admin',8),
+        roleId: 2
+    });
+    User.create({
+        username: 'user',
+        email: 'user@localhost',
+        password: bcrypt.hashSync('user',8),
+        roleId: 1
     });
 }
 

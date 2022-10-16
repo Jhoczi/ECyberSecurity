@@ -27,16 +27,16 @@ db.sequelize = sequelize;
 db.roles = require('./role.model')(sequelize, Sequelize); // DB SET?
 db.users = require('./user.model')(sequelize, Sequelize); // DB SET?
 
-db.roles.belongsToMany(db.users, {
-    through: 'user_roles',
-    foreignKey: 'roleId',
-    otherKey: 'userId'
+db.roles.hasMany(db.users, {
+    //through: 'user_roles',
+    //foreignKey: 'userId',
+    //otherKey: 'roleId'
 });
 
 db.users.belongsTo(db.roles, {
-    through: 'user_roles',
-    foreignKey: 'userId',
-    otherKey: 'roleId'
+    //through: 'user_roles',
+    foreignKey: 'roleId',
+    //otherKey: 'userId'
 });
 
 db.ROLES = ['user', 'admin'];
