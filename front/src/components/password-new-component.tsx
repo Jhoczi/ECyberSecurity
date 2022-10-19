@@ -9,20 +9,19 @@ type Props = {}
 
 type State = {
     redirect: string | null,
-    username: string,
-    password: string,
+    oldPassword: string,
+    newPassword: string,
     loading: boolean,
     message: string,
 }
 
-export const Login = (props: Props) =>
-{
+export const PasswordNew = (props: Props) => {
     const navigate = useNavigate();
 
     const [state, setState] = useState<State>({
         redirect: null,
-        username: "",
-        password: "",
+        oldPassword: "",
+        newPassword: "",
         loading: false,
         message: ""
     });
@@ -33,14 +32,6 @@ export const Login = (props: Props) =>
         // componentDidMount
         const currentUser = AuthService.getCurrentUser();
 
-        if (currentUser && !currentUser.isFirstTime)
-        {
-            setState({
-                ...state,
-                redirect: "/profile"
-            });
-        }
-
         // componentWillUnmount
         return () => {
             window.location.reload();
@@ -49,13 +40,13 @@ export const Login = (props: Props) =>
 
     const validationSchema = () => {
         return Yup.object().shape({
-            username: Yup.string().required("This field is required!"),
-            password: Yup.string().required("This field is required!"),
+            oldPassword: Yup.string().required("This field is required!"),
+            newPassword: Yup.string().required("This field is required!"),
         });
     }
 
-    const handleLogin = (formValue: { username: string, password: string }) => {
-        const { username, password } = formValue;
+    const handlePasswordChange = (formValue: { oldPassword: string, newPassword: string }) => {
+        const { oldPassword, newPassword } = formValue;
 
         setState({
             ...state, // xD?
@@ -63,20 +54,11 @@ export const Login = (props: Props) =>
             loading: true,
         });
 
-        AuthService.login(username, password).then(
-            () => {
+        AuthService.setNewPassword(oldPassword, newPassword).then(() => {
+            console.log("Password changed!");
 
-                const user = AuthService.getCurrentUser();
-                if (user.isFirstTime)
-                {
-                    console.log("ZMIENIAJ CHLOPIE")
-                    setState({...state, redirect: "/password-new"});
-                }
-                else
-                {
-                    setState({...state, redirect: "/profile"});
-                }
-            },
+            setState({...state, redirect: "/profile"});
+        },
             error => {
                 const resMessage = (
                     error.response &&
@@ -92,13 +74,32 @@ export const Login = (props: Props) =>
                 });
             }
         );
+
+        // AuthService.login(username, password).then(
+        //     () => {
+        //     },
+        //     error => {
+        //         const resMessage = (
+        //             error.response &&
+        //             error.response.data &&
+        //             error.response.data.message) ||
+        //             error.message ||
+        //             error.toString();
+
+        //         setState({
+        //             ...state,
+        //             loading: false,
+        //             message: resMessage,
+        //         });
+        //     }
+        // );
     }
 
     const { loading, message } = state;
 
     const initialValues = {
-        username: "",
-        password: "",
+        oldPassword: "",
+        newPassword: "",
     };
 
     if (state.redirect) {
@@ -108,44 +109,40 @@ export const Login = (props: Props) =>
     return (
         <div className="col-md-12">
             <div className="card card-container">
-                <img
-                    src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-                    alt="profile-img"
-                    className="profile-img-card"
-                />
+                <h2>Set New Password</h2>
 
                 <Formik
                     initialValues={initialValues}
                     validationSchema={validationSchema}
-                    onSubmit={handleLogin}
+                    onSubmit={handlePasswordChange}
                 >
                     <Form>
                         <div className="form-group">
-                            <label htmlFor="username">Username</label>
-                            <Field name="username" type="text" className="form-control" />
+                            <label htmlFor="oldPassword">Old Password</label>
+                            <Field name="oldPassword" type="password" className="form-control" />
                             <ErrorMessage
-                                name="username"
+                                name="oldPassword"
                                 component="div"
                                 className="alert alert-danger"
                             />
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="password">Password</label>
-                            <Field name="password" type="password" className="form-control" />
+                            <label htmlFor="new-newPassword">New Password</label>
+                            <Field name="newPassword" type="password" className="form-control" />
                             <ErrorMessage
-                                name="password"
+                                name="new-newPassword"
                                 component="div"
                                 className="alert alert-danger"
                             />
                         </div>
 
-                        <div className="form-group">
+                        <div className="form-group mt-2">
                             <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
                                 {loading && (
                                     <span className="spinner-border spinner-border-sm"></span>
                                 )}
-                                <span>Login</span>
+                                <span>Change password</span>
                             </button>
                         </div>
 

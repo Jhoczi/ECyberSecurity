@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 
 import UserService from "../services/user.service";
+import AuthService from "../services/auth.service";
 
 type Props = {};
 
@@ -15,6 +16,11 @@ export const BoardAdmin = (props: Props) => {
     });
 
     useEffect(() => {
+        const user = AuthService.getCurrentUser();
+
+        if (user && user.isFirstTime) {
+            window.location.href = "/password-new";
+        }
         UserService.getAdminBoard().then(
             response => {
                 setState({
@@ -53,7 +59,7 @@ export const BoardAdmin = (props: Props) => {
                             <h4>Security</h4>
                             <p>Password security settings:</p>
                             <span><b>Password Length: </b></span>
-                            <label className="w-50"><input type="number" name="passLength"/></label> <br />
+                            <label className="w-50"><input type="number" name="minimumPwdLength" min={1} max={999} required/></label> <br />
                             <span><b>Password complexity: </b></span>
                             <label><input type="checkbox" name="specialCharacters" /> Special Characters</label>
                             <label className="mx-3"><input type="checkbox" name="Lower & Upper Letters" /> Lower & Upper Letters </label><br />

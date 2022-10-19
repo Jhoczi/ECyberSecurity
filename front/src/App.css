@@ -94,3 +94,8 @@ label {
   -webkit-border-radius: 50%;
   border-radius: 50%;
 }
+
+#navbar-container
+{
+  font-size:0.8em;
+}

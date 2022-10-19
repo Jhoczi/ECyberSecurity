@@ -16,7 +16,6 @@ class AuthService
                 {
                     localStorage.setItem("user", JSON.stringify(response.data));
                 }
-                return response.data;
             });
     }
 
@@ -42,6 +41,50 @@ class AuthService
             return JSON.parse(userStr);
 
         return null;
+    }
+
+    public async getCurrentUserPasswordSettings()
+    {
+        const pwdStr = localStorage.getItem("passwordSettings");
+        if (pwdStr)
+            return JSON.parse(pwdStr);
+        return null;
+    }
+
+    public async getUserPasswordSettings(email: string)
+    {
+        const response = await axios
+            .post(API_URL + "password", {
+                email
+            });
+
+        localStorage.setItem("passwordSettings", JSON.stringify(response.data));
+    }
+
+    public async setNewPassword(oldPassword: String, newPassword: String)
+    {
+        const currentUser = this.getCurrentUser();
+        if (oldPassword === newPassword || currentUser === null)
+        {
+            throw new Error("New password must be different from old password");
+        }
+
+        //const passwordSettings = await this.getUserPasswordSettings(currentUser.email);
+        const userDataResponse = (await axios.post(API_URL + "new-password", {
+            fullName: currentUser.fullName,
+            email: currentUser.email,
+            tokens: currentUser.tokens,
+            isAdmin: currentUser.isAdmin,
+            isFirstTime: currentUser.isFirstTime,
+            password: newPassword,
+        })).data;
+
+        localStorage.setItem("user", JSON.stringify(userDataResponse));
+    }
+
+    public setUserPasswordSettings()
+    {
+        
     }
 }
 
