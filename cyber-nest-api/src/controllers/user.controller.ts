@@ -1,25 +1,25 @@
 import { Controller, Get, HttpCode } from "@nestjs/common";
 
-@Controller("users")
+@Controller("user")
 export class UserController
 {
     constructor() {}
 
-    @Get()
+    @Get("all")
     @HttpCode(200)
     getPublicContent()
     {
         return "Public Content."
     }
 
-    @Get()
+    @Get("current")
     @HttpCode(200)
     getUserContent()
     {
         return "User Content."
     }
 
-    @Get()
+    @Get("admin")
     @HttpCode(200)
     getAdminContent()
     {

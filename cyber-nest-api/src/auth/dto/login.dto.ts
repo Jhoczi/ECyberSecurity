@@ -1,8 +1,6 @@
 import {IsEmail, IsNotEmpty, IsString, Length, Matches} from 'class-validator';
 
-export class AuthDto {
-  @IsNotEmpty()
-  fullName: string
+export class LoginDto {
   @IsNotEmpty()
   @IsEmail()
   @Matches(/^(?=.*[a-z])(?=.*\d)(?=.*[#$@!%&*?])[A-Za-z\d#$.@!%&*?]{12,}$/)

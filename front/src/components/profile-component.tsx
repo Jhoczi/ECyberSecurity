@@ -8,7 +8,8 @@ type Props = {};
 type State = {
     redirect: string | null,
     userReady: boolean,
-    currentUser: IUser & { accessToken: string }
+    //currentUser: IUser & { accessToken: string }
+    currentUser: IUser
 }
 
 export const Profile = (props: Props) => {
@@ -16,7 +17,7 @@ export const Profile = (props: Props) => {
     const [state, setState] = useState<State>({
         redirect: null,
         userReady: false,
-        currentUser: {accessToken: ""}
+        currentUser: {}
     });
 
     useEffect(() => {
@@ -26,6 +27,7 @@ export const Profile = (props: Props) => {
             setState({...state, redirect: "/home"});
 
         setState({...state, currentUser: currentUser, userReady: true});
+        
     },[]);
 
     if (state.redirect) {
@@ -40,13 +42,13 @@ export const Profile = (props: Props) => {
                 <div>
                     <header className="jumbotron">
                         <h3>
-                            <strong>{currentUser.username}</strong> Profile
+                            <strong>{currentUser.fullName}</strong> Profile
                         </h3>
                     </header>
                     <p>
                         <strong>Token:</strong>{" "}
-                        {currentUser.accessToken.substring(0, 20)} ...{" "}
-                        {currentUser.accessToken.substr(currentUser.accessToken.length - 20)}
+                        {/* {currentUser.tokens.accessToken.substring(0, 20)} ...{" "}
+                        {currentUser.tokens.accessToken.substr(currentUser.accessToken.length - 20)} */}
                     </p>
                     <p>
                         <strong>Id:</strong>{" "}

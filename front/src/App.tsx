@@ -10,7 +10,6 @@ import {Register} from "./components/register-component";
 import {Home} from "./components/home-component";
 import {Profile} from "./components/profile-component";
 import {BoardUser} from "./components/board-user-component";
-import {BoardModerator} from "./components/board-moderator-component";
 import {BoardAdmin} from "./components/board-admin-component";
 
 import AuthVerify from "./common/AuthVerify";
@@ -21,7 +20,6 @@ import IUser from "./types/user-type";
 type Props = {};
 
 type State = {
-    showModeratorBoard: boolean,
     showAdminBoard: boolean,
     currentUser: IUser | undefined
 }
@@ -31,7 +29,6 @@ type State = {
 function App() {
 
     const [state, setState] = useState<State>({
-        showModeratorBoard: false,
         showAdminBoard: false,
         currentUser: undefined
     });
@@ -42,8 +39,8 @@ function App() {
         if (user) {
             setState({
                 currentUser: user,
-                showModeratorBoard: user.roles.includes("ROLE_MODERATOR"),
-                showAdminBoard: user.roles.includes("ROLE_ADMIN"),
+                //showAdminBoard: user.roles.includes("ROLE_ADMIN")
+                showAdminBoard: user.isAdmin
             });
         }
 
@@ -57,13 +54,12 @@ function App() {
     const logOut = () => {
         AuthService.logout();
         setState({
-            showModeratorBoard: false,
             showAdminBoard: false,
             currentUser: undefined,
         });
     }
 
-    const { currentUser, showModeratorBoard, showAdminBoard } = state;
+    const { currentUser, showAdminBoard } = state;
 
     return (
         <div>
@@ -77,14 +73,6 @@ function App() {
                             Home
                         </Link>
                     </li>
-
-                    {showModeratorBoard && (
-                        <li className="nav-item">
-                            <Link to={"/mod"} className="nav-link">
-                                Moderator Board
-                            </Link>
-                        </li>
-                    )}
 
                     {showAdminBoard && (
                         <li className="nav-item">
@@ -107,7 +95,7 @@ function App() {
                     <div className="navbar-nav ml-auto">
                         <li className="nav-item">
                             <Link to={"/profile"} className="nav-link">
-                                {currentUser.username}
+                                {currentUser.fullName}
                             </Link>
                         </li>
                         <li className="nav-item">
@@ -141,7 +129,6 @@ function App() {
                     <Route path="/register" element={<Register />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/user" element={<BoardUser />} />
-                    <Route path="/mod" element={<BoardModerator />} />
                     <Route path="/admin" element={<BoardAdmin />} />
                 </Routes>
             </div>
