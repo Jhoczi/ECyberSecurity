@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 
 import UserService from "../services/user.service";
+import AuthService from "../services/auth.service";
 
 type Props = {};
 
@@ -15,6 +16,9 @@ export const Home = (props: Props) => {
     });
 
     useEffect(() => {
+
+        AuthService.checkFirstTimeLogin();
+
         UserService.getPublicContent().then(
             response => {
                 setState({

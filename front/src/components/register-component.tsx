@@ -3,6 +3,7 @@ import {Formik, Field, Form, ErrorMessage} from "formik";
 import * as Yup from "yup";
 
 import AuthService from "../services/auth.service";
+import {Navigate} from "react-router-dom";
 
 type Props = {};
 
@@ -12,6 +13,14 @@ type State = {
     password: string,
     successful: boolean,
     message: string
+};
+
+type PwdSettings = {
+    expireAt: Date,
+    oneDigit: boolean,
+    oneSpecial: boolean,
+    passwordDaysDuration: number,
+    passwordLength: number,
 };
 
 export const Register = (props: Props) => {
@@ -25,6 +34,9 @@ export const Register = (props: Props) => {
     });
 
     const validationSchema = () => {
+
+        const pwdSettings = AuthService.getCurrentUserPasswordSettings();
+
         return Yup.object().shape({
             username: Yup.string()
                 .test(
@@ -42,15 +54,28 @@ export const Register = (props: Props) => {
             password: Yup.string()
                 .test(
                     "len",
-                    "The password must be between 6 and 40 characters.",
+                    `The password must have ${pwdSettings.passwordLength} characters.`,
                     (val: any) =>
                         val &&
-                        val.toString().length >= 6 &&
-                        val.toString().length <= 40
+                        val.toString().length === pwdSettings.passwordLength
+                )
+                .test(
+                    "oneDigit",
+                    "The password must have at least one digit.",
+                    (val: any) =>
+                        val &&
+                        val.toString().match(/.*[0-9].*/)
+                )
+                .test(
+                    "oneSpecial",
+                    "The password must have at least one special character.",
+                    (val: any) =>
+                        val &&
+                        val.toString().match(/.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?].*/)
                 )
                 .required("This field is required!"),
         });
-    }
+    };
 
     const handleRegister = (formValue: { username: string; email: string; password: string }) => {
         const {username, email, password} = formValue;
@@ -69,7 +94,7 @@ export const Register = (props: Props) => {
             response => {
                 setState({
                     ...state,
-                    message: response.data.message,
+                    message: "Successfully registered",
                     successful: true
                 });
             },
@@ -98,15 +123,16 @@ export const Register = (props: Props) => {
         password: "",
     };
 
+    if (state.successful)
+    {
+        return <Navigate to={"/home"} />
+    }
+
+
     return (
         <div className="col-md-12">
             <div className="card card-container">
-                <img
-                    src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-                    alt="profile-img"
-                    className="profile-img-card"
-                />
-
+                <h2>Register new user</h2>
                 <Formik
                     initialValues={initialValues}
                     validationSchema={validationSchema}
@@ -149,14 +175,14 @@ export const Register = (props: Props) => {
                                     />
                                 </div>
 
-                                <div className="form-group">
+                                <div className="form-group mt-2">
                                     <button type="submit" className="btn btn-primary btn-block">Sign Up</button>
                                 </div>
                             </div>
                         )}
 
                         {message && (
-                            <div className="form-group">
+                            <div className="form-group ">
                                 <div
                                     className={
                                         successful ? "alert alert-success" : "alert alert-danger"

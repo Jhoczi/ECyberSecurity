@@ -16,11 +16,9 @@ export const BoardAdmin = (props: Props) => {
     });
 
     useEffect(() => {
-        const user = AuthService.getCurrentUser();
 
-        if (user && user.isFirstTime) {
-            window.location.href = "/password-new";
-        }
+        AuthService.checkFirstTimeLogin();
+
         UserService.getAdminBoard().then(
             response => {
                 setState({

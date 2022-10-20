@@ -21,6 +21,8 @@ export const Profile = (props: Props) => {
     });
 
     useEffect(() => {
+        AuthService.checkFirstTimeLogin();
+
         const currentUser = AuthService.getCurrentUser();
 
         if (!currentUser)

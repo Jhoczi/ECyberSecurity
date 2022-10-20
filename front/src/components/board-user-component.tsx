@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 
 import UserService from "../services/user.service";
+import AuthService from "../services/auth.service";
 
 type Props = {};
 
@@ -15,6 +16,8 @@ export const BoardUser = (props: Props) => {
     }); // use rather for primitive types
 
     useEffect(() => {
+        AuthService.checkFirstTimeLogin();
+
         UserService.getUserBoard()
             .then(
                 response => {

@@ -58,7 +58,7 @@ export const Login = (props: Props) =>
         const { username, password } = formValue;
 
         setState({
-            ...state, // xD?
+            ...state,
             message: "",
             loading: true,
         });
@@ -121,7 +121,7 @@ export const Login = (props: Props) =>
                 >
                     <Form>
                         <div className="form-group">
-                            <label htmlFor="username">Username</label>
+                            <label htmlFor="username">Email</label>
                             <Field name="username" type="text" className="form-control" />
                             <ErrorMessage
                                 name="username"
@@ -140,7 +140,7 @@ export const Login = (props: Props) =>
                             />
                         </div>
 
-                        <div className="form-group">
+                        <div className="form-group mt-2">
                             <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
                                 {loading && (
                                     <span className="spinner-border spinner-border-sm"></span>

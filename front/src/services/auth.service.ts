@@ -43,7 +43,7 @@ class AuthService
         return null;
     }
 
-    public async getCurrentUserPasswordSettings()
+    public getCurrentUserPasswordSettings()
     {
         const pwdStr = localStorage.getItem("passwordSettings");
         if (pwdStr)
@@ -85,6 +85,15 @@ class AuthService
     public setUserPasswordSettings()
     {
         
+    }
+
+    public checkFirstTimeLogin()
+    {
+        const user = this.getCurrentUser();
+
+        if (user && user.isFirstTime) {
+            window.location.href = "/password-new";
+        }
     }
 }
 
