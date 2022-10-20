@@ -106,6 +106,14 @@ class AuthService
         localStorage.setItem("passwordSettings", JSON.stringify(response));
     }
 
+    public async getUsersList()
+    {
+        const response = (await axios.get("http://localhost:3000/user/local/all")).data;
+        console.log(response);
+
+        return response;
+    }
+
     public checkFirstTimeLogin()
     {
         const user = this.getCurrentUser();
@@ -113,6 +121,11 @@ class AuthService
         if (user && user.isFirstTime) {
             window.location.href = "/password-new";
         }
+    }
+
+    public async deleteUser(email: string)
+    {
+        await axios.delete(`http://localhost:3000/user/${email}`);
     }
 }
 

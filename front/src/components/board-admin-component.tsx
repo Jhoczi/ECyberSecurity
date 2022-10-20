@@ -14,6 +14,12 @@ type State = {
     message: string;
 }
 
+type UserListDto = {
+    id: number;
+    fullName: string;
+    email: string;
+};
+
 export const BoardAdmin = (props: Props) => {
 
     const [state, setState] = useState<State>({
@@ -22,9 +28,23 @@ export const BoardAdmin = (props: Props) => {
         message: ""
     });
 
+    const [users, setUsers] = useState<UserListDto[]>();
+
     useEffect(() => {
 
         AuthService.checkFirstTimeLogin();
+
+        // nice to have class for each user dto
+        const getUserList = AuthService.getUsersList().then(response => {
+            let userList = response.map((user: UserListDto) => {
+                return {
+                    id: user.id,
+                    fullName: user.fullName,
+                    email: user.email
+                }
+            });
+            setUsers(userList);
+        });
 
         UserService.getAdminBoard().then(
             response => {
@@ -88,6 +108,13 @@ export const BoardAdmin = (props: Props) => {
         });
     };
 
+    const deleteUser = (email: string) => {
+        console.log(email);
+        AuthService.deleteUser(email).then(data => {
+            window.location.reload();
+        });
+    };
+
     const {loading, message} = state;
     const initialValues = {
         passwordLength: 0,
@@ -101,6 +128,28 @@ export const BoardAdmin = (props: Props) => {
 
             <div className="col-12">
                 <h1>Admin Panel</h1>
+            </div>
+
+            <div className="container">
+                <h3 className="p-3 text-center">React - Display a list of items</h3>
+                <table className="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {users && users.map(user =>
+                        <tr key={user.email}>
+                            <td>{user.fullName}</td>
+                            <td>
+                                <button type="button" className="btn btn-danger" onClick={ () => deleteUser(user.email)}>Delete</button>
+                            </td>
+                        </tr>
+                    )}
+                    </tbody>
+                </table>
             </div>
 
             <div className="card card-container col-12">
