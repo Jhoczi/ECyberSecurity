@@ -1,4 +1,5 @@
 import axios from "axios";
+import IPwd from "../types/pwd-type";
 
 const API_URL = "http://localhost:3000/auth/local/";
 
@@ -22,6 +23,7 @@ class AuthService
     public logout()
     {
         localStorage.removeItem("user");
+        localStorage.removeItem("passwordSettings");
     }
 
     public register(fullName: string, email: string, password: string)
@@ -61,12 +63,17 @@ class AuthService
         localStorage.setItem("passwordSettings", JSON.stringify(response.data));
     }
 
-    public async setNewPassword(oldPassword: String, newPassword: String)
+    public async setNewPassword(oldPassword: String, newPassword: String, repeatNewPassword: String)
     {
         const currentUser = this.getCurrentUser();
         if (oldPassword === newPassword || currentUser === null)
         {
             throw new Error("New password must be different from old password");
+        }
+
+        if (newPassword !== repeatNewPassword)
+        {
+            throw new Error("New password and repeat new password must be the same");
         }
 
         //const passwordSettings = await this.getUserPasswordSettings(currentUser.email);
@@ -76,15 +83,27 @@ class AuthService
             tokens: currentUser.tokens,
             isAdmin: currentUser.isAdmin,
             isFirstTime: currentUser.isFirstTime,
-            password: newPassword,
+            newPassword: newPassword,
+            oldPassword: oldPassword,
+            repeatNewPassword: repeatNewPassword,
         })).data;
 
         localStorage.setItem("user", JSON.stringify(userDataResponse));
     }
 
-    public setUserPasswordSettings()
+    public async setUserPasswordSettings(pwdSettings: any)
     {
-        
+        const user = this.getCurrentUser();
+
+        const response = (await axios.post(API_URL + "new-password-settings", {
+            passwordLength: pwdSettings.passwordLength,
+            passwordDaysDuration: pwdSettings.passwordExpiration,
+            oneSpecial: pwdSettings.specialCharacter,
+            oneDigit: pwdSettings.oneDigit,
+            userEmail: user.email,
+        })).data;
+
+        localStorage.setItem("passwordSettings", JSON.stringify(response));
     }
 
     public checkFirstTimeLogin()

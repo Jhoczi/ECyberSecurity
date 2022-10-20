@@ -37,6 +37,20 @@ export const Register = (props: Props) => {
 
         const pwdSettings = AuthService.getCurrentUserPasswordSettings();
 
+        const defaultRegex = /(.*?)/;
+        let numberRegex = defaultRegex;
+        let specialRegex = defaultRegex;
+
+        if (pwdSettings.oneDigit)
+        {
+            numberRegex = /\d/;
+        }
+
+        if (pwdSettings.oneSpecial)
+        {
+            specialRegex = /.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?].*/;
+        }
+
         return Yup.object().shape({
             username: Yup.string()
                 .test(
@@ -64,16 +78,17 @@ export const Register = (props: Props) => {
                     "The password must have at least one digit.",
                     (val: any) =>
                         val &&
-                        val.toString().match(/.*[0-9].*/)
+                        val.toString().match(numberRegex)
                 )
                 .test(
                     "oneSpecial",
                     "The password must have at least one special character.",
                     (val: any) =>
                         val &&
-                        val.toString().match(/.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?].*/)
+                        val.toString().match(specialRegex)
                 )
                 .required("This field is required!"),
+
         });
     };
 

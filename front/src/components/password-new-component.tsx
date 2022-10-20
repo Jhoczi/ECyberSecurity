@@ -11,6 +11,7 @@ type State = {
     redirect: string | null,
     oldPassword: string,
     newPassword: string,
+    repeatNewPassword: string,
     loading: boolean,
     message: string,
 }
@@ -22,6 +23,7 @@ export const PasswordNew = (props: Props) => {
         redirect: null,
         oldPassword: "",
         newPassword: "",
+        repeatNewPassword: "",
         loading: false,
         message: ""
     });
@@ -42,11 +44,12 @@ export const PasswordNew = (props: Props) => {
         return Yup.object().shape({
             oldPassword: Yup.string().required("This field is required!"),
             newPassword: Yup.string().required("This field is required!"),
+            repeatNewPassword: Yup.string().required("This field is required!"),
         });
     }
 
-    const handlePasswordChange = (formValue: { oldPassword: string, newPassword: string }) => {
-        const { oldPassword, newPassword } = formValue;
+    const handlePasswordChange = (formValue: { oldPassword: string, newPassword: string , repeatNewPassword: string}) => {
+        const { oldPassword, newPassword, repeatNewPassword } = formValue;
 
         setState({
             ...state, // xD?
@@ -54,7 +57,7 @@ export const PasswordNew = (props: Props) => {
             loading: true,
         });
 
-        AuthService.setNewPassword(oldPassword, newPassword).then(() => {
+        AuthService.setNewPassword(oldPassword, newPassword, repeatNewPassword).then(() => {
             console.log("Password changed!");
 
             setState({...state, redirect: "/profile"});
@@ -100,6 +103,7 @@ export const PasswordNew = (props: Props) => {
     const initialValues = {
         oldPassword: "",
         newPassword: "",
+        repeatNewPassword: "",
     };
 
     if (state.redirect) {
@@ -128,10 +132,20 @@ export const PasswordNew = (props: Props) => {
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="new-newPassword">New Password</label>
+                            <label htmlFor="newPassword">New Password</label>
                             <Field name="newPassword" type="password" className="form-control" />
                             <ErrorMessage
                                 name="new-newPassword"
+                                component="div"
+                                className="alert alert-danger"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="repeatNewPassword">Repeat New Password</label>
+                            <Field name="repeatNewPassword" type="password" className="form-control" />
+                            <ErrorMessage
+                                name="repeatNewPassword"
                                 component="div"
                                 className="alert alert-danger"
                             />
