@@ -32,6 +32,12 @@ export const BoardAdmin = (props: Props) => {
 
     useEffect(() => {
 
+        const user = AuthService.getCurrentUser();
+        if (user && !user.isAdmin)
+        {
+            window.location.href = "/";
+        }
+
         AuthService.checkFirstTimeLogin();
 
         // nice to have class for each user dto

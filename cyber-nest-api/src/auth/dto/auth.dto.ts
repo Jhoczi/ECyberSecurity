@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {IsEmail, IsNotEmpty, IsString, Length, Matches} from 'class-validator';
 
 export class AuthDto {
@@ -5,7 +6,6 @@ export class AuthDto {
   fullName: string
   @IsNotEmpty()
   @IsEmail()
-  @Matches(/^(?=.*[a-z])(?=.*\d)(?=.*[#$@!%&*?])[A-Za-z\d#$.@!%&*?]{12,}$/)
   email: string;
   @IsNotEmpty()
   @IsString()

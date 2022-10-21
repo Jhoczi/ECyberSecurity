@@ -68,10 +68,10 @@ export const Register = (props: Props) => {
             password: Yup.string()
                 .test(
                     "len",
-                    `The password must have ${pwdSettings.passwordLength} characters.`,
+                    `The password length must be greater than ${pwdSettings.passwordLength} characters.`,
                     (val: any) =>
                         val &&
-                        val.toString().length === pwdSettings.passwordLength
+                        val.toString().length >= pwdSettings.passwordLength
                 )
                 .test(
                     "oneDigit",

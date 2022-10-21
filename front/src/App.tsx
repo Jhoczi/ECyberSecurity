@@ -83,11 +83,11 @@ function App() {
                         </Link>
                     </li>
 
-                    <li className="nav-item">
-                        <Link to={"/home"} className="nav-link">
-                            Home
-                        </Link>
-                    </li>
+                    {/*<li className="nav-item">*/}
+                    {/*    <Link to={"/home"} className="nav-link">*/}
+                    {/*        Home*/}
+                    {/*    </Link>*/}
+                    {/*</li>*/}
 
                     {showAdminBoard && (
                         <li className="nav-item">
@@ -97,13 +97,21 @@ function App() {
                         </li>
                     )}
 
-                    {currentUser && (
+                    {showAdminBoard && (
                         <li className="nav-item">
-                            <Link to={"/user"} className="nav-link">
-                                User
+                            <Link to={"/register"} className="nav-link">
+                                New User
                             </Link>
                         </li>
                     )}
+
+                    {/*{currentUser && (*/}
+                    {/*    <li className="nav-item">*/}
+                    {/*        <Link to={"/user"} className="nav-link">*/}
+                    {/*            User*/}
+                    {/*        </Link>*/}
+                    {/*    </li>*/}
+                    {/*)}*/}
                 </div>
                 {currentUser ? (
                     <div className="navbar-nav ml-auto" id="navbar-container">
@@ -112,11 +120,7 @@ function App() {
                                 {currentUser.fullName}
                             </Link>
                         </li>
-                        <li className="nav-item">
-                            <Link to={"/register"} className="nav-link">
-                                New User
-                            </Link>
-                        </li>
+
                         <li className="nav-item">
                             <a href="/login" className="nav-link" onClick={logOut}>
                                 Logout

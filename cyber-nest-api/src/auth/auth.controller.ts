@@ -20,6 +20,7 @@ export class AuthController {
   @Post('local/signup')
   @HttpCode(HttpStatus.CREATED)
   signupLocal(@Body() dto: AuthDto): Promise<Tokens> {
+    console.log(dto);
     return this.authService.signupLocal(dto);
   }
 
@@ -47,23 +48,21 @@ export class AuthController {
     return this.authService.refreshTokens(userId, refreshToken);
   }
 
-  @Post("local/password")
+  @Post('local/password')
   @HttpCode(HttpStatus.OK)
-  getPasswordSettings(@Body("email") email: string): Promise<Pwd> {
+  getPasswordSettings(@Body('email') email: string): Promise<Pwd> {
     return this.authService.getPasswordSettings(email);
   }
 
-  @Post("local/new-password")
+  @Post('local/new-password')
   @HttpCode(HttpStatus.OK)
-  async setUserPassword(@Body() model: UserRequest): Promise<UserResponse>
-  {
+  async setUserPassword(@Body() model: UserRequest): Promise<UserResponse> {
     return await this.authService.updateUserPassword(model);
   }
 
-  @Post("local/new-password-settings")
+  @Post('local/new-password-settings')
   @HttpCode(HttpStatus.OK)
-  async setPasswordSettings(@Body() model: Pwd): Promise<Pwd>
-  {
+  async setPasswordSettings(@Body() model: Pwd): Promise<Pwd> {
     const result = await this.authService.setPasswordSettings(model);
     return result;
   }
