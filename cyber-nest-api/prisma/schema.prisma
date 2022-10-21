@@ -38,3 +38,14 @@ model PasswordSettings {
   oneDigit Boolean
   oneSpecial Boolean
 }
+
+model Log {
+    id        Int      @default(autoincrement()) @id
+    createdAt DateTime @default(now())
+
+    userId Int
+    username String
+
+    action String
+    description String?
+}
