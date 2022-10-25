@@ -1,5 +1,6 @@
 import axios from "axios";
 import IPwd from "../types/pwd-type";
+import ILog from "../types/log-type";
 
 const API_URL = "http://localhost:3000/auth/local/";
 
@@ -126,6 +127,14 @@ class AuthService
     public async deleteUser(email: string)
     {
         await axios.delete(`http://localhost:3000/user/${email}`);
+    }
+
+    public async getLogs()
+    {
+        const response = (await axios.get("http://localhost:3000/logs")).data;
+        const result:ILog[] = response;
+
+        return result;
     }
 }
 

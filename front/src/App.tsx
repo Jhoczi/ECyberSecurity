@@ -18,6 +18,7 @@ import EventBus from "./common/event-bus";
 import IUser from "./types/user-type";
 import IPwd from "./types/pwd-type";
 import {PasswordNew} from "./components/password-new-component";
+import {LogBoard} from "./components/log-component";
 
 type Props = {};
 
@@ -149,6 +150,7 @@ function App() {
                     <Route path="/user" element={<BoardUser/>}/>
                     <Route path="/admin" element={<BoardAdmin/>}/>
                     <Route path="/password-new" element={<PasswordNew/>}/>
+                    <Route path="/logs" element={<LogBoard/>}/>
                 </Routes>
             </div>
 
