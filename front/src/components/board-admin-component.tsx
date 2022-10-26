@@ -33,8 +33,7 @@ export const BoardAdmin = (props: Props) => {
     useEffect(() => {
 
         const user = AuthService.getCurrentUser();
-        if (user && !user.isAdmin)
-        {
+        if (user && !user.isAdmin) {
             window.location.href = "/";
         }
 
@@ -136,8 +135,8 @@ export const BoardAdmin = (props: Props) => {
                 <h1>Admin Panel</h1>
             </div>
 
-            <div className="container">
-                <h3 className="p-3 text-center">React - Display a list of items</h3>
+            <div className="">
+                <h3 className="">Users</h3>
                 <table className="table table-striped table-bordered">
                     <thead>
                     <tr>
@@ -150,7 +149,9 @@ export const BoardAdmin = (props: Props) => {
                         <tr key={user.email}>
                             <td>{user.fullName}</td>
                             <td>
-                                <button type="button" className="btn btn-danger" onClick={ () => deleteUser(user.email)}>Delete</button>
+                                <button type="button" className="btn btn-danger"
+                                        onClick={() => deleteUser(user.email)}>Delete
+                                </button>
                             </td>
                         </tr>
                     )}
@@ -158,7 +159,7 @@ export const BoardAdmin = (props: Props) => {
                 </table>
             </div>
 
-            <div className="card card-container col-12">
+            <div className="card col-12">
                 <header className="jumbotron">
                     <h3>{state.content}</h3>
                 </header>

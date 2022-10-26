@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Navigate} from "react-router-dom";
+import {Navigate, useHistory} from "react-router-dom";
 import AuthService from "../services/auth.service";
 import IUser from "../types/user-type";
 
@@ -8,28 +8,39 @@ type Props = {};
 type State = {
     redirect: string | null,
     userReady: boolean,
-    //currentUser: IUser & { accessToken: string }
-    currentUser: IUser
+    userEditOff: boolean,
+    currentUser: IUser & { accessToken: string }
+    //currentUser: IUser
 }
 
 export const Profile = (props: Props) => {
 
+    const history = useHistory();
+
     const [state, setState] = useState<State>({
         redirect: null,
         userReady: false,
-        currentUser: {}
+        userEditOff: true,
+        currentUser: {} as IUser & { accessToken: string },
     });
 
     useEffect(() => {
         AuthService.checkFirstTimeLogin();
 
-        const currentUser = AuthService.getCurrentUser();
-
-        if (!currentUser)
+        const user = AuthService.getCurrentUser();
+        console.log(user);
+        if (!user)
             setState({...state, redirect: "/home"});
 
-        setState({...state, currentUser: currentUser, userReady: true});
-        
+        setState({...state, currentUser: {
+                id: user.id,
+                fullName: user.fullName,
+                email: user.email,
+                password: user.password,
+                role: user.isAdmin ? "admin" : "user",
+                accessToken: user.tokens.accessToken,
+            }, userReady: true});
+
     },[]);
 
     if (state.redirect) {
@@ -37,9 +48,9 @@ export const Profile = (props: Props) => {
     }
 
     const {currentUser} = state;
-
+    console.log(currentUser);
     return (
-        <div className="container">
+        <div className="">
             {(state.userReady) ?
                 <div>
                     <header className="jumbotron">
@@ -47,6 +58,28 @@ export const Profile = (props: Props) => {
                             <strong>{currentUser.fullName}</strong> Profile
                         </h3>
                     </header>
+                    <form className="my-2">
+                        <div className="form-group">
+                            <label htmlFor="fullName">Full Name:</label>
+                            <input type="text" className="form-control mt-1" id="fullName" defaultValue={state.currentUser.fullName as string} readOnly={state.userEditOff}/>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="email">Email:</label>
+                            <input type="text" className="form-control mt-1" id="email" defaultValue={state.currentUser.email} readOnly={state.userEditOff}/>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="roles">Role:</label>
+                            <input type="text" className="form-control mt-1" id="roles" defaultValue={state.currentUser.role} readOnly={state.userEditOff}/>
+                        </div>
+
+                        <div className="form-group mt-2">
+                            <button type="button" className="btn btn-primary btn-btn-block me-1 px-4" onClick={() => setState({...state, userEditOff: !state.userEditOff})}>{state.userEditOff ? "Edit" : "Cancel"}</button>
+                            <button type="button" className="btn btn-primary btn-btn-block" onClick={() => history.push("/password-new")}>Change Password</button>
+                        </div>
+                        <div className="form-group mt-2">
+
+                        </div>
+                    </form>
                     <p>
                         <strong>Token:</strong>{" "}
                         {/* {currentUser.tokens.accessToken.substring(0, 20)} ...{" "}
