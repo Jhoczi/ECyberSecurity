@@ -5,7 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserController } from './controllers/user.controller';
 import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
-import { LogModule } from './log/logs.module';
+import { LogModule } from './log/log.module';
 
 @Module({
   imports: [AuthModule, PrismaModule, UserModule, LogModule],
