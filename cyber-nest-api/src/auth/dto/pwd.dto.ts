@@ -6,4 +6,5 @@ export class Pwd {
     oneDigit: boolean
     oneSpecial: boolean
     userEmail: string
+    timeoutMinutes: number
 }

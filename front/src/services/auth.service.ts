@@ -102,6 +102,7 @@ class AuthService
             oneSpecial: pwdSettings.specialCharacter,
             oneDigit: pwdSettings.oneDigit,
             userEmail: user.email,
+            timeoutMinutes: pwdSettings.timeoutMinutes,
         })).data;
 
         localStorage.setItem("passwordSettings", JSON.stringify(response));

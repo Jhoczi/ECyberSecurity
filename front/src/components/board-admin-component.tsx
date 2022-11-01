@@ -79,9 +79,9 @@ export const BoardAdmin = (props: Props) => {
             passwordExpiration: Yup.number().required("This field is required!"),
         });
     };
-    const updatePasswordSettings = (formValue: { passwordLength: number, passwordExpiration: number, specialCharacter: boolean, oneDigit: boolean }) => {
+    const updatePasswordSettings = (formValue: { passwordLength: number, passwordExpiration: number, specialCharacter: boolean, oneDigit: boolean, timeoutMinutes: number }) => {
         console.log(formValue)
-        const {passwordLength, passwordExpiration, specialCharacter, oneDigit} = formValue;
+        const {passwordLength, passwordExpiration, specialCharacter, oneDigit, timeoutMinutes} = formValue;
 
         setState({
             ...state,
@@ -125,7 +125,8 @@ export const BoardAdmin = (props: Props) => {
         passwordLength: 0,
         passwordExpiration: 0,
         specialCharacter: false,
-        oneDigit: false
+        oneDigit: false,
+        timeoutMinutes: 10
     };
 
     return (
@@ -214,6 +215,16 @@ export const BoardAdmin = (props: Props) => {
                                 <Field name="passwordExpiration" type="number" className="form-control"/>
                                 <ErrorMessage
                                     name="passwordExpiration"
+                                    component="div"
+                                    className="alert alert-danger"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="timeoutMinutes">Długość sesji w minutach</label>
+                                <Field name="timeoutMinutes" type="number" className="form-control"/>
+                                <ErrorMessage
+                                    name="timeoutMinutes"
                                     component="div"
                                     className="alert alert-danger"
                                 />

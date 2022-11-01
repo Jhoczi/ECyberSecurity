@@ -19,6 +19,7 @@ import IUser from "./types/user-type";
 import IPwd from "./types/pwd-type";
 import {PasswordNew} from "./components/password-new-component";
 import {LogBoard} from "./components/log-component";
+import AppLogout from "./components/AppLogout";
 
 type Props = {};
 
@@ -115,6 +116,7 @@ function App() {
                     {/*)}*/}
                 </div>
                 {currentUser ? (
+                    <AppLogout>
                     <div className="navbar-nav ml-auto" id="navbar-container">
                         <li className="nav-item">
                             <Link to={"/profile"} className="nav-link">
@@ -128,6 +130,7 @@ function App() {
                             </a>
                         </li>
                     </div>
+                    </AppLogout>
                 ) : (
                     <div className="navbar-nav ml-auto" id="navbar-container">
                         <li className="nav-item">

@@ -37,6 +37,7 @@ model PasswordSettings {
   passwordLength Int
   oneDigit Boolean
   oneSpecial Boolean
+  timeoutMinutes Int?
 }
 
 model Log {

@@ -262,7 +262,7 @@ export class AuthService {
             passwordLength: pwdSettings.passwordLength,
             oneDigit: pwdSettings.oneDigit,
             oneSpecial: pwdSettings.oneSpecial,
-
+            timeoutMinutes: pwdSettings.timeoutMinutes,
             userEmail: userEmail,
         };
 
@@ -280,6 +280,7 @@ export class AuthService {
                 oneDigit: passwordDto.oneDigit,
                 oneSpecial: passwordDto.oneSpecial,
                 updatedAt: new Date(),
+                timeoutMinutes: passwordDto.timeoutMinutes,
             },
         });
 
@@ -303,6 +304,7 @@ export class AuthService {
             oneDigit: settings.oneDigit,
             oneSpecial: settings.oneSpecial,
             userEmail: passwordDto.userEmail,
+            timeoutMinutes: settings.timeoutMinutes,
         };
 
         console.log(result);
