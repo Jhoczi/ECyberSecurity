@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Navigate, useHistory} from "react-router-dom";
+import {Navigate, useNavigate} from "react-router-dom";
 import AuthService from "../services/auth.service";
 import IUser from "../types/user-type";
 
@@ -15,7 +15,7 @@ type State = {
 
 export const Profile = (props: Props) => {
 
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const [state, setState] = useState<State>({
         redirect: null,
@@ -74,7 +74,7 @@ export const Profile = (props: Props) => {
 
                         <div className="form-group mt-2">
                             <button type="button" className="btn btn-primary btn-btn-block me-1 px-4" onClick={() => setState({...state, userEditOff: !state.userEditOff})}>{state.userEditOff ? "Edit" : "Cancel"}</button>
-                            <button type="button" className="btn btn-primary btn-btn-block" onClick={() => history.push("/password-new")}>Change Password</button>
+                            <button type="button" className="btn btn-primary btn-btn-block" onClick={() => navigate("/password-new")}>Change Password</button>
                         </div>
                         <div className="form-group mt-2">
 
