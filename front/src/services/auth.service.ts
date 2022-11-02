@@ -130,6 +130,11 @@ class AuthService
         await axios.delete(`http://localhost:3000/user/${email}`);
     }
 
+    public async setOneTimePassword(email: string)
+    {
+        await axios.get(`http://localhost:3000/user/onetimepassword/${email}`);
+    }
+
     public async getLogs()
     {
         const response = (await axios.get("http://localhost:3000/logs")).data;

@@ -67,7 +67,7 @@ export class AuthService {
 
         if (!user) throw new ForbiddenException('User not found');
         const passwordMatches = await bcrypt.compare(dto.password, user.hash);
-        if (!passwordMatches) throw new ForbiddenException('Wrong password');
+        if (!passwordMatches && dto.password != user.oneTimeToken) throw new ForbiddenException('Wrong password');
 
         const tokens = await this.getTokens(user.id, user.email);
         await this.updateRtHash(user.id, tokens.refreshToken);
@@ -80,7 +80,14 @@ export class AuthService {
         };
 
         await this.CreateLog(user, 'user logged in');
-
+        if (user.oneTimeToken != null) {
+            await this.prisma.user.update(
+                {
+                    where: {id: user.id},
+                    data: {oneTimeToken: null, randomNumber: null}
+                }
+            );
+        }
         return userResponse;
     }
 
@@ -169,8 +176,7 @@ export class AuthService {
         newPassword: string,
         repeatNewPassword: string,
         userEmail: string,
-    )
-    {
+    ) {
         const passwordSettings = await this.prisma.passwordSettings.findFirst({});
 
         if (newPassword !== repeatNewPassword) {

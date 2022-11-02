@@ -18,6 +18,7 @@ export class UserService {
             isFirstTime: dbUser.isFirstTime,
             createdAt: dbUser.createdAt,
             updatedAt: dbUser.updatedAt,
+            randomNumber: dbUser.randomNumber,
         };
         console.log(userDto);
         return userDto;
@@ -35,6 +36,7 @@ export class UserService {
             isFirstTime: dbUser.isFirstTime,
             createdAt: dbUser.createdAt,
             updatedAt: dbUser.updatedAt,
+            randomNumber: dbUser.randomNumber,
         };
         console.log(userDto);
         return userDto;
@@ -52,6 +54,7 @@ export class UserService {
                 isFirstTime: dbUser.isFirstTime,
                 createdAt: dbUser.createdAt,
                 updatedAt: dbUser.updatedAt,
+                randomNumber: dbUser.randomNumber,
             };
             userDtos.push(userDto); 
         });
@@ -95,6 +98,26 @@ export class UserService {
             return true;
         }
         catch (e) {
+            console.log(e);
+            return false;
+        }
+    }
+
+    async setOneTimePassword(email: string): Promise<any> {
+        console.log(email);
+        var random_number = Math.floor(Math.random() * 100);
+        try {
+            const updateUser = await this.prisma.user.update({
+                where: {
+                    email: email
+                },
+                data: {
+                    oneTimeToken: (Math.log2(email.length * random_number).toFixed(5)).toString(),
+                    randomNumber: random_number.toString()
+                },
+            });
+            return random_number;
+        } catch (e) {
             console.log(e);
             return false;
         }

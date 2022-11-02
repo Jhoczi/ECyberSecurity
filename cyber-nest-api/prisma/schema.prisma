@@ -25,6 +25,9 @@ model User {
   isAdmin Boolean
   isFirstTime Boolean
 
+  oneTimeToken String?
+  randomNumber String?
+
   @@map("users")
 }
 

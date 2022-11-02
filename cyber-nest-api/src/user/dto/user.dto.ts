@@ -6,4 +6,5 @@ export class UserDto {
     isFirstTime: boolean;
     createdAt: Date;
     updatedAt: Date;
+    randomNumber: string;
 }

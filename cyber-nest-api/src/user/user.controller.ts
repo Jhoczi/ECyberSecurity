@@ -17,4 +17,9 @@ export class UserController {
     async deleteUserByEmail(@Param() params) {
         return this.userService.deleteUserByEmail(params.email);
     }
+
+    @Get("onetimepassword/:email")
+    async setOneTimePassword(@Param() params) {
+        return this.userService.setOneTimePassword(params.email);
+    }
 }

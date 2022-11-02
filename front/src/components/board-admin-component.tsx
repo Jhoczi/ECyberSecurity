@@ -18,6 +18,7 @@ type UserListDto = {
     id: number;
     fullName: string;
     email: string;
+    randomNumber: string;
 };
 
 export const BoardAdmin = (props: Props) => {
@@ -45,7 +46,8 @@ export const BoardAdmin = (props: Props) => {
                 return {
                     id: user.id,
                     fullName: user.fullName,
-                    email: user.email
+                    email: user.email,
+                    randomNumber: user.randomNumber
                 }
             });
             setUsers(userList);
@@ -120,6 +122,12 @@ export const BoardAdmin = (props: Props) => {
         });
     };
 
+    const oneTimePassword = (email: string) => {
+        AuthService.setOneTimePassword(email).then(data => {
+            window.location.reload();
+        });
+    }
+
     const {loading, message} = state;
     const initialValues = {
         passwordLength: 0,
@@ -153,6 +161,13 @@ export const BoardAdmin = (props: Props) => {
                                 <button type="button" className="btn btn-danger"
                                         onClick={() => deleteUser(user.email)}>Delete
                                 </button>
+                            </td>
+                            <td>
+                                <button type="button" className="btn btn-primary"
+                                        onClick={() => oneTimePassword(user.email)}>Set one time password
+                                </button>
+                                {user.randomNumber ? <>One time random number: {user.randomNumber}</> : null}
+
                             </td>
                         </tr>
                     )}
