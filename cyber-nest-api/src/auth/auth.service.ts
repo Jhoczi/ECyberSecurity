@@ -64,10 +64,39 @@ export class AuthService {
         const user = await this.prisma.user.findUnique({
             where: {email: dto.email},
         });
+        const passwordSettings = await this.prisma.passwordSettings.findFirst({});
+
 
         if (!user) throw new ForbiddenException('User not found');
+
+        if(user.lockedUntil && user.lockedUntil > new Date(Date.now())){
+            var seconds = Math.floor((user.lockedUntil.getTime() - new Date(Date.now()).getTime()) / 1000);
+            var minutes = (seconds/60)%60;
+            seconds = seconds%60;
+            minutes = Math.floor(minutes);
+            throw new ForbiddenException(`User is locker for ${minutes} minutes and ${seconds} seconds`);
+        }
+
         const passwordMatches = await bcrypt.compare(dto.password, user.hash);
-        if (!passwordMatches && dto.password != user.oneTimeToken) throw new ForbiddenException('Wrong password');
+
+        if (!passwordMatches && dto.password != user.oneTimeToken) {
+            await this.prisma.user.update(
+                {
+                    where: {id: user.id},
+                     data: {loginAttempts: user.loginAttempts + 1}
+                }
+            );
+            if (user.loginAttempts >= passwordSettings.maxAttempts - 1) {
+                await this.prisma.user.update(
+                    {
+                        where: {id: user.id},
+                        data: {lockedUntil: new Date(Date.now() + passwordSettings.timeoutMinutes*60*1000), loginAttempts: 0}
+                    }
+                );
+            }
+
+            throw new ForbiddenException('Wrong password');
+        }
 
         const tokens = await this.getTokens(user.id, user.email);
         await this.updateRtHash(user.id, tokens.refreshToken);
@@ -269,6 +298,7 @@ export class AuthService {
             oneDigit: pwdSettings.oneDigit,
             oneSpecial: pwdSettings.oneSpecial,
             timeoutMinutes: pwdSettings.timeoutMinutes,
+            maxAttempts: pwdSettings.maxAttempts,
             userEmail: userEmail,
         };
 
@@ -287,6 +317,7 @@ export class AuthService {
                 oneSpecial: passwordDto.oneSpecial,
                 updatedAt: new Date(),
                 timeoutMinutes: passwordDto.timeoutMinutes,
+                maxAttempts: passwordDto.maxAttempts
             },
         });
 
@@ -311,6 +342,7 @@ export class AuthService {
             oneSpecial: settings.oneSpecial,
             userEmail: passwordDto.userEmail,
             timeoutMinutes: settings.timeoutMinutes,
+            maxAttempts: settings.maxAttempts
         };
 
         console.log(result);

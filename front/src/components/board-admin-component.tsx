@@ -81,9 +81,9 @@ export const BoardAdmin = (props: Props) => {
             passwordExpiration: Yup.number().required("This field is required!"),
         });
     };
-    const updatePasswordSettings = (formValue: { passwordLength: number, passwordExpiration: number, specialCharacter: boolean, oneDigit: boolean, timeoutMinutes: number }) => {
+    const updatePasswordSettings = (formValue: { passwordLength: number, passwordExpiration: number, specialCharacter: boolean, oneDigit: boolean, timeoutMinutes: number, maxAttempts: number }) => {
         console.log(formValue)
-        const {passwordLength, passwordExpiration, specialCharacter, oneDigit, timeoutMinutes} = formValue;
+        const {passwordLength, passwordExpiration, specialCharacter, oneDigit, timeoutMinutes, maxAttempts} = formValue;
 
         setState({
             ...state,
@@ -134,7 +134,8 @@ export const BoardAdmin = (props: Props) => {
         passwordExpiration: 0,
         specialCharacter: false,
         oneDigit: false,
-        timeoutMinutes: 10
+        timeoutMinutes: 10,
+        maxAttempts: 5
     };
 
     return (
@@ -236,7 +237,7 @@ export const BoardAdmin = (props: Props) => {
                             </div>
 
                             <div className="form-group">
-                                <label htmlFor="timeoutMinutes">Długość sesji w minutach</label>
+                                <label htmlFor="timeoutMinutes">Max inactivity duration in minutes</label>
                                 <Field name="timeoutMinutes" type="number" className="form-control"/>
                                 <ErrorMessage
                                     name="timeoutMinutes"
@@ -245,6 +246,15 @@ export const BoardAdmin = (props: Props) => {
                                 />
                             </div>
 
+                            <div className="form-group">
+                                <label htmlFor="maxAttempts">Max wrong password attempts</label>
+                                <Field name="maxAttempts" type="number" className="form-control"/>
+                                <ErrorMessage
+                                    name="maxAttempts"
+                                    component="div"
+                                    className="alert alert-danger"
+                                />
+                            </div>
                             <div className="form-group mt-3">
                                 <button type="submit" className="btn btn-primary btn-block w-50" disabled={loading}>
                                     {loading && (

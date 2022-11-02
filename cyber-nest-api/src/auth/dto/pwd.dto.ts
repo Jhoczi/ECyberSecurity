@@ -7,4 +7,5 @@ export class Pwd {
     oneSpecial: boolean
     userEmail: string
     timeoutMinutes: number
+    maxAttempts: number
 }

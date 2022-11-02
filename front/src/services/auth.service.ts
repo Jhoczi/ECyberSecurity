@@ -103,6 +103,7 @@ class AuthService
             oneDigit: pwdSettings.oneDigit,
             userEmail: user.email,
             timeoutMinutes: pwdSettings.timeoutMinutes,
+            maxAttempts: pwdSettings.maxAttempts
         })).data;
 
         localStorage.setItem("passwordSettings", JSON.stringify(response));
