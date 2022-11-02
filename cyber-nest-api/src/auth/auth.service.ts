@@ -381,7 +381,7 @@ export class AuthService {
         await this.logService.createLog({
             userId: model.id,
             action: 'User created',
-            description: `User ${model.fullName} created`,
+            description: message,
             username: model.fullName,
         });
     }
