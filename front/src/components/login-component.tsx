@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import {useCallback, useEffect, useState} from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import {GoogleReCaptcha, GoogleReCaptchaProvider, useGoogleReCaptcha} from 'react-google-recaptcha-v3';
 
 import AuthService from "../services/auth.service";
 
@@ -18,7 +19,6 @@ type State = {
 export const Login = (props: Props) =>
 {
     const navigate = useNavigate();
-
     const [state, setState] = useState<State>({
         redirect: null,
         username: "",
@@ -27,9 +27,36 @@ export const Login = (props: Props) =>
         message: ""
     });
 
+    // CAPTCHA SETTINGS
+    const { executeRecaptcha } = useGoogleReCaptcha();
+    const [token, setToken] = useState('');
+    const [dynamicAction, setDynamicAction] = useState('homepage');
+    const [actionToChange, setActionToChange] = useState('');
+    // END OF CAPTCHA SETTINGS
+
     const [currentUser, setUser] = useState();
 
+
     useEffect(() => {
+
+        if (!executeRecaptcha || !dynamicAction) {
+            return;
+        }
+
+        const handleReCaptchaVerify = async () => {
+            const token = await executeRecaptcha(dynamicAction);
+            setToken(token);
+        };
+
+        handleReCaptchaVerify();
+        // if (executeRecaptcha) {
+        //     console.log("XD");
+        //     const result = executeRecaptcha('').then(data => {
+        //         setToken(data);
+        //     });
+        //     console.log(`Captcha: ${token}`);
+        // }
+
         // componentDidMount
         const currentUser = AuthService.getCurrentUser();
 
@@ -45,7 +72,7 @@ export const Login = (props: Props) =>
         return () => {
             window.location.reload();
         }
-    }, []);
+    }, [executeRecaptcha]);
 
     const validationSchema = () => {
         return Yup.object().shape({
@@ -53,6 +80,18 @@ export const Login = (props: Props) =>
             password: Yup.string().required("This field is required!"),
         });
     }
+
+    const clickHandler = useCallback(async () => {
+        if (!executeRecaptcha) {
+            return;
+        }
+
+        const result = await executeRecaptcha('dynamicAction');
+
+        setToken(result);
+        console.log(`Captcha: ${token}`);
+    }, [dynamicAction, executeRecaptcha]);
+
 
     const handleLogin = (formValue: { username: string, password: string }) => {
         const { username, password } = formValue;
@@ -107,6 +146,7 @@ export const Login = (props: Props) =>
 
     return (
         <div className="col-md-12">
+
             <div className="card card-container">
                 <img
                     src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
@@ -117,7 +157,7 @@ export const Login = (props: Props) =>
                 <Formik
                     initialValues={initialValues}
                     validationSchema={validationSchema}
-                    onSubmit={handleLogin}
+                    onSubmit={clickHandler}
                 >
                     <Form>
                         <div className="form-group">
@@ -159,6 +199,7 @@ export const Login = (props: Props) =>
                     </Form>
                 </Formik>
             </div>
+
         </div>
     );
 }

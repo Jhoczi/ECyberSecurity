@@ -21,7 +21,8 @@ import {PasswordNew} from "./components/password-new-component";
 import {LogBoard} from "./components/log-component";
 import AppLogout from "./components/AppLogout";
 
-type Props = {};
+import {GoogleReCaptcha, GoogleReCaptchaProvider} from 'react-google-recaptcha-v3';
+import {GoogleRecaptchaExample} from "./components/google-recaptcha-example";
 
 type State = {
     showAdminBoard: boolean,
@@ -30,13 +31,16 @@ type State = {
 }
 
 
-function App() {
 
+function App() {
+    const key = "6LfhUgwjAAAAAF88kcCqzzGPfgzWaLlFXxtWyqfh";
     const [state, setState] = useState<State>({
         showAdminBoard: false,
         currentUser: undefined,
         passwordSettings: undefined,
     });
+    const [token, setToken] = useState();
+    const [refreshReCaptcha, setRefreshReCaptcha] = useState(false);
 
     const getPasswordSettings = async (user: any) => {
         await AuthService.getUserPasswordSettings(user.email);
@@ -73,10 +77,17 @@ function App() {
         });
     }
 
+    const handleVerify = (token: any) => {
+        setToken(token);
+        console.log(`Here is your tucking token: ${token}`);
+    };
+
     const {currentUser, showAdminBoard} = state;
 
     return (
         <div>
+            <GoogleReCaptchaProvider reCaptchaKey={key}>
+
             <nav className="navbar navbar-expand navbar-dark bg-dark">
                 <div className="navbar-nav mr-auto" id="navbar-container">
                     <li className="nav-item">
@@ -84,12 +95,6 @@ function App() {
                             Cyber
                         </Link>
                     </li>
-
-                    {/*<li className="nav-item">*/}
-                    {/*    <Link to={"/home"} className="nav-link">*/}
-                    {/*        Home*/}
-                    {/*    </Link>*/}
-                    {/*</li>*/}
 
                     {showAdminBoard && (
                         <li className="nav-item">
@@ -107,13 +112,6 @@ function App() {
                         </li>
                     )}
 
-                    {/*{currentUser && (*/}
-                    {/*    <li className="nav-item">*/}
-                    {/*        <Link to={"/user"} className="nav-link">*/}
-                    {/*            User*/}
-                    {/*        </Link>*/}
-                    {/*    </li>*/}
-                    {/*)}*/}
                 </div>
                 {currentUser ? (
                     <AppLogout>
@@ -142,7 +140,6 @@ function App() {
                 )}
 
             </nav>
-
             <div className="container mt-3">
                 <Routes>
                     <Route path="/" element={<Home/>}/>
@@ -154,10 +151,11 @@ function App() {
                     <Route path="/admin" element={<BoardAdmin/>}/>
                     <Route path="/password-new" element={<PasswordNew/>}/>
                     <Route path="/logs" element={<LogBoard/>}/>
+                    <Route path="/xd" element={<GoogleRecaptchaExample/>}/>
                 </Routes>
             </div>
-
             <AuthVerify logOut={logOut}/>
+            </GoogleReCaptchaProvider>
         </div>
     );
 }
