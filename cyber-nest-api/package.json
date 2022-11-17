@@ -27,6 +27,7 @@
     "@nestjs/passport": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/typeorm": "^9.0.1",
+    "@nestlab/google-recaptcha": "^3.2.0",
     "@prisma/client": "^4.5.0",
     "@types/jsonwebtoken": "^8.5.9",
     "bcrypt": "^5.1.0",

@@ -8,6 +8,7 @@ import {Pwd} from './dto/pwd.dto';
 import {UserRequest} from './dto/user-request.dto';
 import {response} from 'express';
 import {LogService} from "../log/log.service";
+import {GoogleRecaptchaException, GoogleRecaptchaValidator} from "@nestlab/google-recaptcha";
 
 @Injectable()
 export class AuthService {
@@ -15,6 +16,7 @@ export class AuthService {
         private prisma: PrismaService,
         private jwtService: JwtService,
         private logService: LogService,
+        private readonly recaptchaValidator: GoogleRecaptchaValidator
     ) {
     }
 
@@ -61,6 +63,23 @@ export class AuthService {
     }
 
     async signinLocal(dto: LoginDto): Promise<UserResponse> {
+
+        if (dto.visCaptcha.split("").reverse().join("") !== dto.ourCaptcha)
+        {
+            throw new ForbiddenException('Access Denied ( Our captcha failed)');
+        }
+
+        const result = await this.recaptchaValidator.validate({
+            response: dto.token,
+            score: 0.8,
+        });
+        console.log(result.success);
+        console.log(result);
+
+        if (!result.success || result.nativeResponse.score < 0.8) {
+            throw new ForbiddenException("Captcha verification failed");
+        }
+
         const user = await this.prisma.user.findUnique({
             where: {email: dto.email},
         });

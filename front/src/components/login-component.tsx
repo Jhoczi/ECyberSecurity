@@ -2,7 +2,7 @@ import {useCallback, useEffect, useState} from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import {GoogleReCaptcha, GoogleReCaptchaProvider, useGoogleReCaptcha} from 'react-google-recaptcha-v3';
+import {useGoogleReCaptcha} from 'react-google-recaptcha-v3';
 
 import AuthService from "../services/auth.service";
 
@@ -18,7 +18,7 @@ type State = {
 
 export const Login = (props: Props) =>
 {
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
     const [state, setState] = useState<State>({
         redirect: null,
         username: "",
@@ -27,11 +27,22 @@ export const Login = (props: Props) =>
         message: ""
     });
 
+    const makeCaptcha = (length: number) => {
+        let result           = '';
+        let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let charactersLength = characters.length;
+        for ( let i = 0; i < length; i++ ) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
+    }
+
+    const [visibleCaptcha, setVisibleCaptcha] = useState(makeCaptcha(3));
+
     // CAPTCHA SETTINGS
     const { executeRecaptcha } = useGoogleReCaptcha();
     const [token, setToken] = useState('');
-    const [dynamicAction, setDynamicAction] = useState('homepage');
-    const [actionToChange, setActionToChange] = useState('');
+
     // END OF CAPTCHA SETTINGS
 
     const [currentUser, setUser] = useState();
@@ -39,12 +50,12 @@ export const Login = (props: Props) =>
 
     useEffect(() => {
 
-        if (!executeRecaptcha || !dynamicAction) {
+        if (!executeRecaptcha) {
             return;
         }
 
         const handleReCaptchaVerify = async () => {
-            const token = await executeRecaptcha(dynamicAction);
+            const token = await executeRecaptcha();
             setToken(token);
         };
 
@@ -81,28 +92,32 @@ export const Login = (props: Props) =>
         });
     }
 
-    const clickHandler = useCallback(async () => {
+    const clickHandler = async (formValue: { username: string, password: string, ourCaptcha:string }) => {
+        console.log(token);
+        await handlerCaptcha();
+        handleLogin(formValue, token, visibleCaptcha);
+    };
+    const handlerCaptcha = useCallback(async () => {
         if (!executeRecaptcha) {
             return;
         }
 
-        const result = await executeRecaptcha('dynamicAction');
-
+        const result = await executeRecaptcha()
         setToken(result);
-        console.log(`Captcha: ${token}`);
-    }, [dynamicAction, executeRecaptcha]);
+
+    }, [executeRecaptcha]);
 
 
-    const handleLogin = (formValue: { username: string, password: string }) => {
-        const { username, password } = formValue;
+    const handleLogin = (formValue: { username: string, password: string, ourCaptcha:string }, token: string, visibleCaptcha: string) => {
+        const { username, password, ourCaptcha } = formValue;
 
         setState({
             ...state,
             message: "",
             loading: true,
         });
-
-        AuthService.login(username, password).then(
+        console.log("Login token:" + token);
+        AuthService.login(username, password, token, visibleCaptcha, ourCaptcha).then(
             () => {
 
                 const user = AuthService.getCurrentUser();
@@ -133,27 +148,30 @@ export const Login = (props: Props) =>
         );
     }
 
+
+
     const { loading, message } = state;
 
     const initialValues = {
         username: "",
         password: "",
+        ourCaptcha: "",
+        visibleCaptcha: visibleCaptcha
     };
 
     if (state.redirect) {
         return <Navigate to={state.redirect} />
     }
 
+
     return (
         <div className="col-md-12">
-
             <div className="card card-container">
                 <img
                     src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
                     alt="profile-img"
                     className="profile-img-card"
                 />
-
                 <Formik
                     initialValues={initialValues}
                     validationSchema={validationSchema}
@@ -175,6 +193,17 @@ export const Login = (props: Props) =>
                             <Field name="password" type="password" className="form-control" />
                             <ErrorMessage
                                 name="password"
+                                component="div"
+                                className="alert alert-danger"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="ourCaptcha">Captcha</label>
+                            <label htmlFor="ourCaptcha">Enter captcha phrase in reverse order: <b>{initialValues.visibleCaptcha}</b></label>
+                            <Field name="ourCaptcha" type="text" className="form-control"/>
+                            <ErrorMessage
+                                name="ourCaptcha"
                                 component="div"
                                 className="alert alert-danger"
                             />

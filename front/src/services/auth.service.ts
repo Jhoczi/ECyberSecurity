@@ -6,12 +6,15 @@ const API_URL = "http://localhost:3000/auth/local/";
 
 class AuthService
 {
-    public login (email: string, password: string)
+    public login (email: string, password: string, token: string,  visCaptcha: string, ourCaptcha: string)
     {
         return axios
             .post(API_URL + "signin", {
                 email,
-                password
+                password,
+                token,
+                visCaptcha,
+                ourCaptcha
             })
             .then(response => {
                 if (response.data.tokens)

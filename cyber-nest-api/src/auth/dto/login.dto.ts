@@ -7,4 +7,13 @@ export class LoginDto {
   @IsNotEmpty()
   @IsString()
   password: string;
+  @IsNotEmpty()
+  @IsString()
+  token: string;
+  @IsNotEmpty()
+  @IsString()
+  visCaptcha: string;
+  @IsNotEmpty()
+  @IsString()
+  ourCaptcha: string;
 }
