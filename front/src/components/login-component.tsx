@@ -24,7 +24,7 @@ export const Login = (props: Props) =>
         username: "",
         password: "",
         loading: false,
-        message: ""
+        message: "xd"
     });
 
     const makeCaptcha = (length: number) => {

@@ -139,6 +139,14 @@ class AuthService
         await axios.get(`http://localhost:3000/user/onetimepassword/${email}`);
     }
 
+    public async uploadFile(file: File | null)
+    {
+        if (file === null)
+            throw new Error("File is null");
+
+        await axios.post("http://localhost:3000/user/upload", file);
+    }
+
     public async getLogs()
     {
         const response = (await axios.get("http://localhost:3000/logs")).data;

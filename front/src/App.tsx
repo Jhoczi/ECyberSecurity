@@ -23,6 +23,7 @@ import AppLogout from "./components/AppLogout";
 
 import {GoogleReCaptcha, GoogleReCaptchaProvider} from 'react-google-recaptcha-v3';
 import {GoogleRecaptchaExample} from "./components/google-recaptcha-example";
+import {FileUploadPage} from "./components/file-upload";
 
 type State = {
     showAdminBoard: boolean,
@@ -152,6 +153,7 @@ function App() {
                     <Route path="/password-new" element={<PasswordNew/>}/>
                     <Route path="/logs" element={<LogBoard/>}/>
                     <Route path="/xd" element={<GoogleRecaptchaExample/>}/>
+                    <Route path="/upload" element={<FileUploadPage/>}/>
                 </Routes>
             </div>
             <AuthVerify logOut={logOut}/>
