@@ -45,6 +45,7 @@ model PasswordSettings {
   oneSpecial Boolean @default(false)
   timeoutMinutes Int? @default(15)
   maxAttempts Int @default(5)
+  trialPassword String
 }
 
 model Log {

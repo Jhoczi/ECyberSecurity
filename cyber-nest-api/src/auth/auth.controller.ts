@@ -7,7 +7,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthDto, LoginDto, UserResponse, Pwd } from './dto';
+import { AuthDto, LoginDto, UserResponse, Pwd, TrialPassword } from './dto';
 import { Tokens } from './types';
 import { AtGuard, RtGuard } from '../common/guards';
 import { GetCurrentUser } from '../common/decorators';
@@ -65,5 +65,11 @@ export class AuthController {
   async setPasswordSettings(@Body() model: Pwd): Promise<Pwd> {
     const result = await this.authService.setPasswordSettings(model);
     return result;
+  }
+
+  @Post('local/verify-password')
+  @HttpCode(HttpStatus.OK)
+  async verifyPassword(@Body() model: TrialPassword): Promise<boolean> {
+    return await this.authService.verifyPassword(model.trialPassword);
   }
 }

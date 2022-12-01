@@ -1,6 +1,6 @@
 import {ForbiddenException, Injectable} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
-import {AuthDto, LoginDto, UserResponse} from './dto';
+import {AuthDto, LoginDto, UserResponse, TrialPassword} from './dto';
 import * as bcrypt from 'bcrypt';
 import {Tokens} from './types';
 import {JwtService} from '@nestjs/jwt';
@@ -9,6 +9,7 @@ import {UserRequest} from './dto/user-request.dto';
 import {response} from 'express';
 import {LogService} from "../log/log.service";
 import {GoogleRecaptchaException, GoogleRecaptchaValidator} from "@nestlab/google-recaptcha";
+import * as cesar from 'caesar-salad';
 
 @Injectable()
 export class AuthService {
@@ -64,8 +65,7 @@ export class AuthService {
 
     async signinLocal(dto: LoginDto): Promise<UserResponse> {
 
-        if (dto.visCaptcha.split("").reverse().join("") !== dto.ourCaptcha)
-        {
+        if (dto.visCaptcha.split("").reverse().join("") !== dto.ourCaptcha) {
             throw new ForbiddenException('Access Denied ( Our captcha failed)');
         }
 
@@ -88,10 +88,10 @@ export class AuthService {
 
         if (!user) throw new ForbiddenException('User not found');
 
-        if(user.lockedUntil && user.lockedUntil > new Date(Date.now())){
+        if (user.lockedUntil && user.lockedUntil > new Date(Date.now())) {
             var seconds = Math.floor((user.lockedUntil.getTime() - new Date(Date.now()).getTime()) / 1000);
-            var minutes = (seconds/60)%60;
-            seconds = seconds%60;
+            var minutes = (seconds / 60) % 60;
+            seconds = seconds % 60;
             minutes = Math.floor(minutes);
             throw new ForbiddenException(`User is locker for ${minutes} minutes and ${seconds} seconds`);
         }
@@ -102,14 +102,17 @@ export class AuthService {
             await this.prisma.user.update(
                 {
                     where: {id: user.id},
-                     data: {loginAttempts: user.loginAttempts + 1}
+                    data: {loginAttempts: user.loginAttempts + 1}
                 }
             );
             if (user.loginAttempts >= passwordSettings.maxAttempts - 1) {
                 await this.prisma.user.update(
                     {
                         where: {id: user.id},
-                        data: {lockedUntil: new Date(Date.now() + passwordSettings.timeoutMinutes*60*1000), loginAttempts: 0}
+                        data: {
+                            lockedUntil: new Date(Date.now() + passwordSettings.timeoutMinutes * 60 * 1000),
+                            loginAttempts: 0
+                        }
                     }
                 );
             }
@@ -189,6 +192,12 @@ export class AuthService {
                 hashedRt: hash,
             },
         });
+    }
+
+    async verifyPassword(password: string): Promise<boolean> {
+        const passwordSettings = await this.prisma.passwordSettings.findFirst({});
+        const hashed_password = cesar.Vigenere.Cipher('hash').crypt(password);
+        return hashed_password === passwordSettings.trialPassword;
     }
 
     // validation methods
