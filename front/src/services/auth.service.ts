@@ -139,12 +139,10 @@ class AuthService
         await axios.get(`http://localhost:3000/user/onetimepassword/${email}`);
     }
 
-    public async uploadFile(file: File | null)
+    public async checkAccessKey(key: string)
     {
-        if (file === null)
-            throw new Error("File is null");
-
-        await axios.post("http://localhost:3000/user/upload", file);
+        const result = await axios.post(API_URL + "/verify-password", key);
+        return result.data;
     }
 
     public async getLogs()
